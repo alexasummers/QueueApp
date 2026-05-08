@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Queue Tracker</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+    }
+
+    .button-container {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 25px;
+    }
+
+    button {
+      flex: 1;
+      max-width: 200px;
+      padding: 20px;
+      font-size: 24px;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .queue-a {
+      background: #007bff;
+    }
+
+    .queue-b {
+      background: #28a745;
+    }
+
+    .clear-btn {
+      background: #dc3545;
+      margin-top: 15px;
+      width: 100%;
+      max-width: 415px;
+    }
+
+    #log {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      max-width: 500px;
+      margin: auto;
+      text-align: left;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .entry {
+      padding: 10px 0;
+      border-bottom: 1px solid #ddd;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Queue Tracker</h1>
+
+  <div class="button-container">
+    <button class="queue-a" onclick="logQueue('Queue A')">
+      Queue A
+    </button>
+
+    <button class="queue-b" onclick="logQueue('Queue B')">
+      Queue B
+    </button>
+  </div>
+
+  <div id="log"></div>
+
+  <button class="clear-btn" onclick="clearLog()">
+    Clear Log
+  </button>
+
+  <script>
+    function logQueue(queueName) {
+      const now = new Date();
+
+      const timestamp = now.toLocaleString();
+
+      const entry = document.createElement("div");
+      entry.className = "entry";
+      entry.textContent = `${queueName} pressed at ${timestamp}`;
+
+      const log = document.getElementById("log");
+
+      // Add newest entries to top
+      log.prepend(entry);
+    }
+
+    function clearLog() {
+      document.getElementById("log").innerHTML = "";
+    }
+  </script>
+
+</body>
+</html>
