@@ -15,40 +15,43 @@
     }
 
     h1 {
-      margin-bottom: 30px;
+      margin-bottom: 10px;
+    }
+
+    #counter {
+      font-size: 22px;
+      margin-bottom: 20px;
+      font-weight: bold;
     }
 
     .button-container {
       display: flex;
-      gap: 15px;
+      gap: 10px;
       justify-content: center;
+      flex-wrap: wrap;
       margin-bottom: 25px;
     }
 
     button {
       flex: 1;
-      max-width: 200px;
-      padding: 20px;
-      font-size: 24px;
+      min-width: 120px;
+      padding: 18px;
+      font-size: 20px;
       border: none;
       border-radius: 12px;
       color: white;
       cursor: pointer;
     }
 
-    .queue-a {
-      background: #007bff;
-    }
-
-    .queue-b {
-      background: #28a745;
-    }
+    .queue-a { background: #007bff; }
+    .queue-b { background: #28a745; }
+    .done-btn { background: #ff9800; }
 
     .clear-btn {
       background: #dc3545;
       margin-top: 15px;
       width: 100%;
-      max-width: 415px;
+      max-width: 420px;
     }
 
     #log {
@@ -66,44 +69,53 @@
     .entry {
       padding: 10px 0;
       border-bottom: 1px solid #ddd;
-      font-size: 18px;
+      font-size: 16px;
     }
   </style>
 </head>
+
 <body>
 
   <h1>Queue Tracker</h1>
 
-  <div class="button-container">
-    <button class="queue-a" onclick="logQueue('Queue A')">
-      Queue A
-    </button>
+  <div id="counter">Done count: 0</div>
 
-    <button class="queue-b" onclick="logQueue('Queue B')">
-      Queue B
-    </button>
+  <div class="button-container">
+    <button class="queue-a" onclick="logQueue('Queue A')">Queue A</button>
+    <button class="queue-b" onclick="logQueue('Queue B')">Queue B</button>
+    <button class="done-btn" onclick="markDone()">Done!</button>
   </div>
 
   <div id="log"></div>
 
-  <button class="clear-btn" onclick="clearLog()">
-    Clear Log
-  </button>
+  <button class="clear-btn" onclick="clearLog()">Clear Log</button>
 
   <script>
+    let doneCount = 0;
+
     function logQueue(queueName) {
       const now = new Date();
-
       const timestamp = now.toLocaleString();
 
       const entry = document.createElement("div");
       entry.className = "entry";
       entry.textContent = `${queueName} pressed at ${timestamp}`;
 
-      const log = document.getElementById("log");
+      document.getElementById("log").prepend(entry);
+    }
 
-      // Add newest entries to top
-      log.prepend(entry);
+    function markDone() {
+      doneCount++;
+
+      document.getElementById("counter").textContent =
+        `Done count: ${doneCount}`;
+
+      const now = new Date();
+      const entry = document.createElement("div");
+      entry.className = "entry";
+      entry.textContent = `DONE clicked at ${now.toLocaleString()}`;
+
+      document.getElementById("log").prepend(entry);
     }
 
     function clearLog() {
