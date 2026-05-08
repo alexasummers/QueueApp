@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Queue Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Queue Tracker Pro</title>
 
   <style>
     body {
@@ -14,12 +14,15 @@
       text-align: center;
     }
 
-    h1 {
+    h1 { margin-bottom: 10px; }
+
+    #status {
+      font-size: 18px;
       margin-bottom: 10px;
     }
 
-    #counter {
-      font-size: 22px;
+    #summary {
+      font-size: 16px;
       margin-bottom: 20px;
       font-weight: bold;
     }
@@ -36,29 +39,22 @@
       flex: 1;
       min-width: 120px;
       padding: 18px;
-      font-size: 20px;
+      font-size: 18px;
       border: none;
       border-radius: 12px;
       color: white;
       cursor: pointer;
     }
 
-    .queue-a { background: #007bff; }
-    .queue-b { background: #28a745; }
-    .done-btn { background: #ff9800; }
-
-    .clear-btn {
-      background: #dc3545;
-      margin-top: 15px;
-      width: 100%;
-      max-width: 420px;
-    }
+    .a { background: #007bff; }
+    .b { background: #28a745; }
+    .done { background: #ff9800; }
 
     #log {
       background: white;
       border-radius: 12px;
       padding: 15px;
-      max-width: 500px;
+      max-width: 600px;
       margin: auto;
       text-align: left;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -67,61 +63,94 @@
     }
 
     .entry {
-      padding: 10px 0;
       border-bottom: 1px solid #ddd;
-      font-size: 16px;
+      padding: 10px 0;
+      font-size: 14px;
     }
   </style>
 </head>
 
 <body>
 
-  <h1>Queue Tracker</h1>
+<h1>Queue Tracker Pro</h1>
 
-  <div id="counter">Done count: 0</div>
+<div id="status">Current Queue: None</div>
+<div id="summary">No active session</div>
 
-  <div class="button-container">
-    <button class="queue-a" onclick="logQueue('Queue A')">Queue A</button>
-    <button class="queue-b" onclick="logQueue('Queue B')">Queue B</button>
-    <button class="done-btn" onclick="markDone()">Done!</button>
-  </div>
+<div class="button-container">
+  <button class="a" onclick="switchQueue('A')">Queue A</button>
+  <button class="b" onclick="switchQueue('B')">Queue B</button>
+  <button class="done" onclick="markDone()">Done!</button>
+</div>
 
-  <div id="log"></div>
+<div id="log"></div>
 
-  <button class="clear-btn" onclick="clearLog()">Clear Log</button>
+<script>
+  let currentQueue = null;
 
-  <script>
-    let doneCount = 0;
+  let sessionStart = null;
+  let sessionDoneCount = 0;
 
-    function logQueue(queueName) {
-      const now = new Date();
-      const timestamp = now.toLocaleString();
+  let queueStats = {
+    A: { done: 0, totalTime: 0 },
+    B: { done: 0, totalTime: 0 }
+  };
+
+  function switchQueue(queue) {
+    const now = Date.now();
+
+    // close previous session
+    if (currentQueue && sessionStart) {
+      const duration = Math.round((now - sessionStart) / 1000);
+
+      queueStats[currentQueue].totalTime += duration;
 
       const entry = document.createElement("div");
       entry.className = "entry";
-      entry.textContent = `${queueName} pressed at ${timestamp}`;
+      entry.textContent =
+        `Session closed: Queue ${currentQueue} | Time: ${duration}s | Done in session: ${sessionDoneCount}`;
 
       document.getElementById("log").prepend(entry);
     }
 
-    function markDone() {
-      doneCount++;
+    // switch to new queue
+    currentQueue = queue;
+    sessionStart = now;
+    sessionDoneCount = 0;
 
-      document.getElementById("counter").textContent =
-        `Done count: ${doneCount}`;
+    document.getElementById("status").textContent =
+      `Current Queue: ${queue}`;
 
-      const now = new Date();
-      const entry = document.createElement("div");
-      entry.className = "entry";
-      entry.textContent = `DONE clicked at ${now.toLocaleString()}`;
+    updateSummary();
+  }
 
-      document.getElementById("log").prepend(entry);
+  function markDone() {
+    if (!currentQueue) {
+      alert("Select a queue first");
+      return;
     }
 
-    function clearLog() {
-      document.getElementById("log").innerHTML = "";
-    }
-  </script>
+    const now = new Date().toLocaleString();
+
+    queueStats[currentQueue].done++;
+    sessionDoneCount++;
+
+    const entry = document.createElement("div");
+    entry.className = "entry";
+    entry.textContent =
+      `DONE → Queue ${currentQueue} at ${now}`;
+
+    document.getElementById("log").prepend(entry);
+
+    updateSummary();
+  }
+
+  function updateSummary() {
+    document.getElementById("summary").textContent =
+      `A Done: ${queueStats.A.done} | B Done: ${queueStats.B.done} | ` +
+      `Session Done: ${sessionDoneCount}`;
+  }
+</script>
 
 </body>
 </html>
